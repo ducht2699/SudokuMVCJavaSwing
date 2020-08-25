@@ -29,9 +29,37 @@ public class View extends JFrame {
 
     private JButton undo;
 
-    private JButton redo;
+    public JButton getEasy() {
+        return easy;
+    }
 
-    private JButton freeze;
+    public JButton getMedium() {
+        return medium;
+    }
+
+    public JButton getHard() {
+        return hard;
+    }
+
+    public JButton getSave() {
+        return save;
+    }
+
+    public JButton getLoad() {
+        return load;
+    }
+
+    private JButton redo;
+    
+    private JButton easy;
+    
+    private JButton medium;
+    
+    private JButton hard;
+    
+    private JButton save;
+    
+    private JButton load;
 
     //Labels
     private JLabel text;
@@ -68,9 +96,7 @@ public class View extends JFrame {
         return cands;
     }
 
-    public JButton getFreeze() {
-        return freeze;
-    }
+
 
     private JLabel[][] cands;
 
@@ -91,7 +117,7 @@ public class View extends JFrame {
 
         this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         this.setTitle("Sudoku by Team 7");
-        this.setSize(546, 640);
+        this.setSize(546, 647);
         this.setLayout(null);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
@@ -173,7 +199,6 @@ public class View extends JFrame {
                                 undos.add(new Model(sudoku));
                                 redos.clear();
                                 undo.setEnabled(true);
-                                freeze.setEnabled(true);
                                 redo.setEnabled(false);
                                 sudoku.setCellValue(x, y, numb);
                                 sudoku.test(x, y);
@@ -215,29 +240,51 @@ public class View extends JFrame {
         }
         /*---------------------------------------------------------------------------------------------*/
         //generate Buttons
+        //ngang: 546, dọc: 80
+        //line 1
+        easy = new JButton("Easy");
+        easy.setFont(new Font("forte", 9, 16));
+        easy.setBounds(115, 545, 75, 32);
+        
+        medium = new JButton("Medium");
+        medium.setFont(new Font("forte", 9, 10));
+        medium.setBounds(195, 545, 75, 32);
+        
+        hard = new JButton("Hard");
+        hard.setFont(new Font("forte", 9, 16));
+        hard.setBounds(275, 545, 75, 32);
+        
         solve = new JButton("Solve");
         solve.setFont(new Font("forte", 9, 16));
-        solve.setBounds(390, 550, 100, 50);
+        solve.setBounds(355, 545, 75, 32);
 
+        //line 2
         undo = new JButton("Undo");
         undo.setFont(new Font("forte", 9, 16));
-        undo.setBounds(60, 550, 100, 50);
+        undo.setBounds(115, 582, 75, 32);
         undo.setEnabled(false);
 
         redo = new JButton("Redo");
         redo.setFont(new Font("forte", 9, 16));
-        redo.setBounds(170, 550, 100, 50);
+        redo.setBounds(195, 582, 75, 32);
         redo.setEnabled(false);
 
-        freeze = new JButton("Freeze");
-        freeze.setFont(new Font("forte", 9, 16));
-        freeze.setBounds(280, 550, 100, 50);
-        freeze.setEnabled(false);
+        save = new JButton("Save");
+        save.setFont(new Font("forte", 9, 16));
+        save.setBounds(275, 582, 75, 32);
+        
+        load = new JButton("Load");
+        load.setFont(new Font("forte", 9, 16));
+        load.setBounds(355, 582, 75, 32);
 
         this.add(solve);
         this.add(undo);
         this.add(redo);
-        this.add(freeze);
+        this.add(easy);
+        this.add(hard);
+        this.add(medium);
+        this.add(save);
+        this.add(load);
         this.setVisible(true);
     }
 

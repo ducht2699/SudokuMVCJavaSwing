@@ -202,6 +202,10 @@ public class Model {
         }
         return false;
     }
+    
+    public void saveWork() {
+        
+    }
 
     //*************************************************************************
     public class Cell extends Observable implements Observer, Iterable<Integer> {

@@ -4,12 +4,6 @@
  * and open the template in the editor.
  */
 package sudoku;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 /**
@@ -30,7 +24,7 @@ public class Controller {
         view.getSolve().addActionListener(e -> actionSolve());
         view.getUndo().addActionListener(e -> actionUndo());
         view.getRedo().addActionListener(e -> actionRedo());
-        view.getFreeze().addActionListener(e -> actionFreeze());
+        view.getSave().addActionListener(e -> actionSave());
 
     }
 
@@ -53,7 +47,6 @@ public class Controller {
 
     public void actionUndo() {
         view.getRedo().setEnabled(true);
-        view.getFreeze().setEnabled(true);
         Model copia = view.getUndos().pop();
         if (!view.getSudoku().isNullCandidates()) {
             view.getRedos().add(new Model(view.getSudoku()));
@@ -72,7 +65,6 @@ public class Controller {
         Model copia = view.getRedos().pop();
         view.getUndos().add(new Model(view.getSudoku()));
         view.setSudoku(new Model(copia));
-        view.getFreeze().setEnabled(true);
         view.getUndo().setEnabled(true);
         if (view.getRedos().size() == 0) {
             view.getRedo().setEnabled(false);
@@ -81,11 +73,7 @@ public class Controller {
         view.repaint();
     }
 
-    public void actionFreeze() {
-        view.getFreeze().setEnabled(false);
-        view.getUndo().setEnabled(false);
-        view.getRedo().setEnabled(false);
-        view.getUndos().clear();
-        view.getRedos().clear();
+    public void actionSave() {
+
     }
 }
