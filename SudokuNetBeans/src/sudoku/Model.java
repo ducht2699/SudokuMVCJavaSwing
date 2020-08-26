@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,15 +12,19 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
+import javafx.application.Application;
+import java.io.Serializable;
 
-public class Model {
+
+public class Model implements Serializable{
 
     private Cell[][] cells = new Cell[9][9];
 
     private String[] shape = new String[9];
 
+
     public Model(Model a) {
-        construirTablero();
+        constructTable();
         for (int i = 0; i < 9; i++) {
             this.shape[i] = a.getShape()[i];
         }
@@ -37,50 +42,12 @@ public class Model {
         }
     }
 
-    public Model(File archivo) throws FileNotFoundException, IOException {
-        construirTablero();
-        FileReader fr = new FileReader(archivo);
-        BufferedReader br = new BufferedReader(fr);
-        StringTokenizer token;
-        String linea;
-        int cont = 0;
-        int pos;
-        int value;
-        int iter = 0;
-        while ((linea = br.readLine()) != null) {
-            if (cont == 9) {
-                for (int i = 0; i < 9; i++) {
-                    for (int j = 0; j < 9; j++) {
-                        cells[i][j].addObserver();
-                    }
-                }
-                cont++;
-                continue;
-            }
-            if (cont < 9) {
-                this.shape[cont] = linea;
-                cont++;
-            } else {
-                token = new StringTokenizer(linea);
-                pos = Integer.parseInt(token.nextToken());
-                value = Integer.parseInt(token.nextToken());;
-                this.cells[pos / 9][pos % 9].setValue(value);
-                test(pos / 9, pos % 9);
-            }
-        }
-        if (cont == 9) {
-            for (int i = 0; i < 9; i++) {
-                for (int j = 0; j < 9; j++) {
-                    cells[i][j].addObserver();
-                }
-            }
-        }
-        fr.close();
+    
+    public Model() throws FileNotFoundException, IOException {
+        LoadWork();
     }
 
     //GETTERS
-    public Model() {
-    }
 
     public String[] getShape() {
         return shape;
@@ -104,7 +71,7 @@ public class Model {
 
     }
 
-    public void construirTablero() {
+    public void constructTable() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 cells[i][j] = new Cell(i, j);
@@ -203,12 +170,68 @@ public class Model {
         return false;
     }
     
-    public void saveWork() {
-        
+    public void LoadWork() throws FileNotFoundException, IOException {
+        constructTable();
+        FileReader fr = new FileReader("WorkData.txt");
+        BufferedReader br = new BufferedReader(fr);
+        StringTokenizer token;
+        String linea;
+        int cont = 0;
+        int pos;
+        int value;
+        int iter = 0;
+        while ((linea = br.readLine()) != null) {
+            if (cont == 9) {
+                for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        cells[i][j].addObserver();
+                    }
+                }
+                cont++;
+                continue;
+            }
+            if (cont < 9) {
+                this.shape[cont] = linea;
+                cont++;
+            } else {
+                token = new StringTokenizer(linea);
+                pos = Integer.parseInt(token.nextToken());
+                value = Integer.parseInt(token.nextToken());
+                this.cells[pos / 9][pos % 9].setValue(value);
+                test(pos / 9, pos % 9);
+            }
+        }
+        if (cont == 9) {
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    cells[i][j].addObserver();
+                }
+            }
+        }
+        fr.close();
+    }
+    
+    public void saveWork() throws FileNotFoundException, IOException {
+        File filePath = new File("WorkData.txt");
+        FileWriter f = new FileWriter(filePath);
+        //shape
+        for (int i = 0; i < 9; i++) {
+            f.write(shape[i] + "\n");
+        }
+        //data
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (cells[i][j].getValue() > 0) {
+                    f.write("\n" + Integer.toString(i * 9 + j) + " " + Integer.toString(cells[i][j].getValue()));
+                }
+            }
+        }
+        //undo-redo
+        f.close();
     }
 
     //*************************************************************************
-    public class Cell extends Observable implements Observer, Iterable<Integer> {
+    public class Cell extends Observable implements Serializable, Observer, Iterable<Integer> {
 
         private List<Integer> values = new ArrayList<Integer>();
 

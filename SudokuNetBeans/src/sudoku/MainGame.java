@@ -5,7 +5,6 @@
  */
 package sudoku;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -15,10 +14,10 @@ import java.io.IOException;
  */
 public class MainGame {
 
-    public static void main(String args[]) throws FileNotFoundException, IOException {
-        File archivo = new File("board.txt");
-        View v = new View(archivo);
+    public static void main(String args[]) throws FileNotFoundException, IOException, ClassNotFoundException {
         Model m = new Model();
+        View v = new View();
+        
 
         Controller c = new Controller(m, v);
         c.initController();

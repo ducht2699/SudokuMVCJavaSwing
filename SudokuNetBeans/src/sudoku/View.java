@@ -4,10 +4,18 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Stack;
 
 import javax.swing.ImageIcon;
@@ -17,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import javax.swing.JPanel;
+import jdk.jfr.events.FileReadEvent;
 
 public class View extends JFrame {
 
@@ -28,6 +37,10 @@ public class View extends JFrame {
     private JButton solve;
 
     private JButton undo;
+
+    public void setModel(Model m) {
+        this.sudoku = m;
+    }
 
     public JButton getEasy() {
         return easy;
@@ -50,15 +63,15 @@ public class View extends JFrame {
     }
 
     private JButton redo;
-    
+
     private JButton easy;
-    
+
     private JButton medium;
-    
+
     private JButton hard;
-    
+
     private JButton save;
-    
+
     private JButton load;
 
     //Labels
@@ -84,6 +97,16 @@ public class View extends JFrame {
         return redos;
     }
 
+
+    public void load() throws FileNotFoundException, IOException, ClassNotFoundException {
+        undos.clear();
+        redos.clear();
+        redo.setEnabled(false);
+        undo.setEnabled(false);
+        
+    }
+
+
     public JButton getUndo() {
         return undo;
     }
@@ -96,8 +119,6 @@ public class View extends JFrame {
         return cands;
     }
 
-
-
     private JLabel[][] cands;
 
     //Undo
@@ -108,13 +129,7 @@ public class View extends JFrame {
     public View() {
     }
 
-    public View(File archivo) throws FileNotFoundException, IOException {
-        sudoku = new Model(archivo);
-        initComponents();
-    }
-
     public void initComponents() {
-
         this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         this.setTitle("Sudoku by Team 7");
         this.setSize(546, 647);
@@ -245,15 +260,15 @@ public class View extends JFrame {
         easy = new JButton("Easy");
         easy.setFont(new Font("forte", 9, 16));
         easy.setBounds(115, 545, 75, 32);
-        
+
         medium = new JButton("Medium");
         medium.setFont(new Font("forte", 9, 10));
         medium.setBounds(195, 545, 75, 32);
-        
+
         hard = new JButton("Hard");
         hard.setFont(new Font("forte", 9, 16));
         hard.setBounds(275, 545, 75, 32);
-        
+
         solve = new JButton("Solve");
         solve.setFont(new Font("forte", 9, 16));
         solve.setBounds(355, 545, 75, 32);
@@ -262,20 +277,29 @@ public class View extends JFrame {
         undo = new JButton("Undo");
         undo.setFont(new Font("forte", 9, 16));
         undo.setBounds(115, 582, 75, 32);
-        undo.setEnabled(false);
 
         redo = new JButton("Redo");
         redo.setFont(new Font("forte", 9, 16));
         redo.setBounds(195, 582, 75, 32);
-        redo.setEnabled(false);
 
         save = new JButton("Save");
         save.setFont(new Font("forte", 9, 16));
         save.setBounds(275, 582, 75, 32);
-        
+
         load = new JButton("Load");
         load.setFont(new Font("forte", 9, 16));
         load.setBounds(355, 582, 75, 32);
+
+        if (undos.isEmpty()) {
+            undo.setEnabled(false);
+        } else {
+            undo.setEnabled(true);
+        }
+        if (redos.isEmpty()) {
+            redo.setEnabled(false);
+        } else {
+            redo.setEnabled(true);
+        }
 
         this.add(solve);
         this.add(undo);
@@ -339,4 +363,11 @@ public class View extends JFrame {
         }
     }
 
+    public void saveWork() throws IOException {
+        sudoku.saveWork();
+    }
+    
+    public void loadWork() throws IOException {
+        sudoku.LoadWork();
+    }
 }

@@ -4,6 +4,10 @@
  * and open the template in the editor.
  */
 package sudoku;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -15,19 +19,41 @@ public class Controller {
     private Model model;
     private View view;
 
-    public Controller(Model model, View view) {
+    public Controller(Model model, View view) throws IOException, FileNotFoundException, ClassNotFoundException {
         this.model = model;
         this.view = view;
+        initView();
+    }
+    public void initView() throws IOException, FileNotFoundException, ClassNotFoundException {
+        view.setModel(model);
+        view.initComponents();
     }
 
     public void initController() {
         view.getSolve().addActionListener(e -> actionSolve());
         view.getUndo().addActionListener(e -> actionUndo());
         view.getRedo().addActionListener(e -> actionRedo());
-        view.getSave().addActionListener(e -> actionSave());
+        view.getSave().addActionListener(e -> {
+            try {
+                actionSave();
+            } catch (IOException ex) {
+                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        
+        view.getLoad().addActionListener(e -> {
+            try {
+                actionLoad();
+            } catch (IOException ex) {
+                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
 
     }
-
     public void actionSolve() {
         view.getRedos().clear();
         view.getUndos().add(new Model(view.getSudoku()));
@@ -73,7 +99,14 @@ public class Controller {
         view.repaint();
     }
 
-    public void actionSave() {
-
+    public void actionSave() throws IOException, FileNotFoundException, ClassNotFoundException {
+        view.saveWork();
+        //view.save();
+    }
+    
+    public void actionLoad() throws IOException, FileNotFoundException, ClassNotFoundException {
+        view.loadWork();
+        view.load();
+        view.update();
     }
 }
