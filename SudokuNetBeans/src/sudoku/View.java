@@ -33,6 +33,8 @@ public class View extends JFrame {
 
     private JPanel[][] board;
 
+    private boolean isChecking = false;
+
     //Buttons
     private JButton solve;
 
@@ -115,6 +117,14 @@ public class View extends JFrame {
 
     public JLabel getText() {
         return text;
+    }
+
+    public boolean isIsChecking() {
+        return isChecking;
+    }
+
+    public void setIsChecking(boolean isChecking) {
+        this.isChecking = isChecking;
     }
     //setter
 
@@ -269,7 +279,7 @@ public class View extends JFrame {
         hard.setFont(new Font("forte", 9, 16));
         hard.setBounds(275, 545, 75, 32);
 
-        solve = new JButton("Solve");
+        solve = new JButton("Check");
         solve.setFont(new Font("forte", 9, 16));
         solve.setBounds(355, 545, 75, 32);
 

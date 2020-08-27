@@ -5,6 +5,7 @@
  */
 package sudoku;
 
+import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Random;
@@ -79,23 +80,61 @@ public class Controller {
     }
 
     public void actionSolve() {
-        view.getRedos().clear();
-        view.getUndos().add(new Model(view.getSudoku()));
-        Model temp = new Model(view.getSudoku());
-        
-        boolean result = temp.backtracking();
-        
-        view.setSudoku(temp);
-        view.getUndo().setEnabled(true);
-        view.getRedo().setEnabled(false);
-        view.getRedos().clear();
+        if (!view.isIsChecking()) {
+            view.setIsChecking(true);
+            Model temp = new Model(view.getSudoku());
+            temp.backtracking();
+
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    int a = view.getSudoku().getCell(i, j).getValue();
+                    int b = temp.getCell(i, j).getValue();
+
+                    if (a != b) {
+                        view.getBoard()[i][j].setBackground(Color.RED);
+                    }
+
+                }
+            }
+        } else {
+            view.setIsChecking(false);
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    switch (view.getSudoku().getShape()[i].charAt(j)) {
+                        case ('1'):
+                            view.getBoard()[i][j].setBackground(new Color(238, 248, 255));
+                            break;
+                        case ('2'):
+                            view.getBoard()[i][j].setBackground(new Color(250, 255, 0));
+                            break;
+                        case ('3'):
+                            view.getBoard()[i][j].setBackground(new Color(198, 141, 141));
+                            break;
+                        case ('4'):
+                            view.getBoard()[i][j].setBackground(new Color(239, 233, 133));
+                            break;
+                        case ('5'):
+                            view.getBoard()[i][j].setBackground(new Color(255, 252, 201));
+                            break;
+                        case ('6'):
+                            view.getBoard()[i][j].setBackground(new Color(160, 217, 232));
+                            break;
+                        case ('7'):
+                            view.getBoard()[i][j].setBackground(new Color(91, 246, 143));
+                            break;
+                        case ('8'):
+                            view.getBoard()[i][j].setBackground(new Color(255, 157, 112));
+                            break;
+                        case ('9'):
+                            view.getBoard()[i][j].setBackground(new Color(255, 227, 224));
+                            break;
+                    }
+                }
+            }
+        }
+
         view.update();
         view.repaint();
-        if (result) {
-            JOptionPane.showMessageDialog(null, "Solution founded by Backtracking", "Notification", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(null, "Cannot be solve with your work ", "Error", JOptionPane.ERROR_MESSAGE);
-        }
 
     }
 
@@ -156,7 +195,7 @@ public class Controller {
             do {
                 col = rd.nextInt(9);
                 row = rd.nextInt(9);
-            } while (newModel.getCellValue(row, col) == 0 || newModel.getCellValue(row, col) == -1 );
+            } while (newModel.getCellValue(row, col) == 0 || newModel.getCellValue(row, col) == -1);
 
             newModel.setCellValue(row, col, 0);
             newModel.getCell(row, col).setSolve(false);
