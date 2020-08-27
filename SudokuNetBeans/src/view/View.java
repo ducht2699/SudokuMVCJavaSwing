@@ -269,7 +269,7 @@ public class View extends JFrame {
         hard.setFont(new Font("forte", 9, 16));
         hard.setBounds(275, 545, 75, 32);
 
-        solve = new JButton("Check");
+        solve = new JButton("Solve");
         solve.setFont(new Font("forte", 9, 16));
         solve.setBounds(355, 545, 75, 32);
 
