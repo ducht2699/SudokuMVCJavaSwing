@@ -5,6 +5,9 @@
  */
 package sudoku;
 
+import view.View;
+import model.Sudoku;
+import controller.Controller;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -15,7 +18,7 @@ import java.io.IOException;
 public class MainGame {
 
     public static void main(String args[]) throws FileNotFoundException, IOException, ClassNotFoundException {
-        Model m = new Model("WorkDataDefault.txt");
+        Sudoku m = new Sudoku("WorkDataDefault.txt");
         View v = new View();
         
 

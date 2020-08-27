@@ -1,4 +1,4 @@
-package sudoku;
+package model;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +14,7 @@ import java.util.Observer;
 import java.util.StringTokenizer;
 import java.io.Serializable;
 
-public class Model implements Serializable {
+public class Sudoku implements Serializable {
 
     private Cell[][] cells = new Cell[9][9];
 
@@ -52,14 +52,14 @@ public class Model implements Serializable {
     }
 
     //constructor
-    public Model(Model a) {
+    public Sudoku(Sudoku a) {
         constructTable();
         for (int i = 0; i < 9; i++) {
             this.shape[i] = a.getShape()[i];
         }
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                cells[i][j].addObserver();
+                cells[i][j].addObserver(shape, cells);
             }
         }
         for (int i = 0; i < 9; i++) {
@@ -72,7 +72,7 @@ public class Model implements Serializable {
         }
     }
 
-    public Model(String filePath) throws FileNotFoundException, IOException {
+    public Sudoku(String filePath) throws FileNotFoundException, IOException {
         LoadWork(filePath);
     }
 
@@ -116,7 +116,7 @@ public class Model implements Serializable {
         }
     }
 
-    public void clone(Model board) {
+    public void clone(Sudoku board) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 this.cells[i][j].clone(board.getCell(i, j));
@@ -143,10 +143,10 @@ public class Model implements Serializable {
                 }
                 if (!this.getCell(i, j).isSolve()) {
                     for (int x : this.getCell(i, j)) {
-                        Model copia = new Model(this);
+                        Sudoku copia = new Sudoku(this);
                         copia.setCellValue(i, j, x);
                         if (copia.backtracking()) {
-                            this.clone(new Model(copia));
+                            this.clone(new Sudoku(copia));
                             return true;
                         }
                     }
@@ -182,7 +182,7 @@ public class Model implements Serializable {
             if (cont == 9) {
                 for (int i = 0; i < 9; i++) {
                     for (int j = 0; j < 9; j++) {
-                        cells[i][j].addObserver();
+                        cells[i][j].addObserver(shape, cells);
                     }
                 }
                 cont++;
@@ -202,7 +202,7 @@ public class Model implements Serializable {
         if (cont == 9) {
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
-                    cells[i][j].addObserver();
+                    cells[i][j].addObserver(shape, cells);
                 }
             }
         }
@@ -229,92 +229,92 @@ public class Model implements Serializable {
     }
 
     //*************************************************************************
-    public class Cell extends Observable implements Serializable, Observer, Iterable<Integer> {
-
-        private List<Integer> values = new ArrayList<Integer>();
-
-        private boolean isSolved = false;
-
-        private int row;
-
-        private int col;
-
-        public Cell(int row, int col) {
-            this.row = row;
-            this.col = col;
-            for (int n = 1; n <= 9; n++) {
-                values.add(n);
-            }
-        }
-
-        public synchronized void addObserver() {
-            int mycell = Integer.parseInt("" + shape[row].charAt(col));
-            for (int i = 0; i < 9; i++) {
-                for (int j = 0; j < 9; j++) {
-                    boolean isSame = (i == row) && (j == col);
-                    boolean isSameLine = (i == row) || (j == col);
-                    boolean isSecondary = false;
-                    int mycontext = Integer.parseInt("" + shape[i].charAt(j));
-                    if (mycell == mycontext) {
-                        isSecondary = true;
-                    }
-                    if (!isSame && (isSameLine || isSecondary)) {
-                        super.addObserver(cells[i][j]);
-                    }
-                }
-            }
-        }
-
-        public void setValue(int value) {
-            values.clear();
-            values.add(value);
-            isSolved = true;
-            super.setChanged();
-            super.notifyObservers(value);
-        }
-
-        @Override
-        public void update(Observable o, Object arg) {
-            values.remove(arg);
-        }
-
-        public int getValue() {
-            return (getValues().size() == 1) ? getValues().get(0) : (getValues().size() == 0) ? -1 : 0;
-        }
-
-        public boolean isSolve() {
-            return this.isSolved;
-        }
-        
-        public void setSolve(boolean b) {
-            this.isSolved = b;
-        }
-
-        public List<Integer> getValues() {
-            return values;
-        }
-
-        @Override
-        public String toString() {
-            String cadena = "";
-            for (int i = 0; i < values.size(); i++) {
-                cadena += String.format("%s ", Integer.toString(values.get(i)));
-            }
-            return cadena;
-        }
-
-        public Iterator<Integer> iterator() {
-            return values.iterator();
-        }
-
-        public void clone(Cell celda) {
-            List<Integer> copia = new ArrayList<Integer>();
-            copia.addAll(celda.getValues());
-            values.clear();
-            values.addAll(copia);
-            isSolved = celda.isSolve();
-        }
-
-    }
+//    public class Cell extends Observable implements Serializable, Observer, Iterable<Integer> {
+//
+//        private List<Integer> values = new ArrayList<Integer>();
+//
+//        private boolean isSolved = false;
+//
+//        private int row;
+//
+//        private int col;
+//
+//        public Cell(int row, int col) {
+//            this.row = row;
+//            this.col = col;
+//            for (int n = 1; n <= 9; n++) {
+//                values.add(n);
+//            }
+//        }
+//
+//        public synchronized void addObserver() {
+//            int mycell = Integer.parseInt("" + shape[row].charAt(col));
+//            for (int i = 0; i < 9; i++) {
+//                for (int j = 0; j < 9; j++) {
+//                    boolean isSame = (i == row) && (j == col);
+//                    boolean isSameLine = (i == row) || (j == col);
+//                    boolean isSecondary = false;
+//                    int mycontext = Integer.parseInt("" + shape[i].charAt(j));
+//                    if (mycell == mycontext) {
+//                        isSecondary = true;
+//                    }
+//                    if (!isSame && (isSameLine || isSecondary)) {
+//                        super.addObserver(cells[i][j]);
+//                    }
+//                }
+//            }
+//        }
+//
+//        public void setValue(int value) {
+//            values.clear();
+//            values.add(value);
+//            isSolved = true;
+//            super.setChanged();
+//            super.notifyObservers(value);
+//        }
+//
+//        @Override
+//        public void update(Observable o, Object arg) {
+//            values.remove(arg);
+//        }
+//
+//        public int getValue() {
+//            return (getValues().size() == 1) ? getValues().get(0) : (getValues().size() == 0) ? -1 : 0;
+//        }
+//
+//        public boolean isSolve() {
+//            return this.isSolved;
+//        }
+//        
+//        public void setSolve(boolean b) {
+//            this.isSolved = b;
+//        }
+//
+//        public List<Integer> getValues() {
+//            return values;
+//        }
+//
+//        @Override
+//        public String toString() {
+//            String cadena = "";
+//            for (int i = 0; i < values.size(); i++) {
+//                cadena += String.format("%s ", Integer.toString(values.get(i)));
+//            }
+//            return cadena;
+//        }
+//
+//        public Iterator<Integer> iterator() {
+//            return values.iterator();
+//        }
+//
+//        public void clone(Cell celda) {
+//            List<Integer> copia = new ArrayList<Integer>();
+//            copia.addAll(celda.getValues());
+//            values.clear();
+//            values.addAll(copia);
+//            isSolved = celda.isSolve();
+//        }
+//
+//    }
 
 }

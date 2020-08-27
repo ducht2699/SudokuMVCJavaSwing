@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sudoku;
+package controller;
 
 import java.awt.Color;
 import java.io.FileNotFoundException;
@@ -12,6 +12,8 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import model.Sudoku;
+import view.View;
 
 /**
  *
@@ -19,10 +21,10 @@ import javax.swing.JOptionPane;
  */
 public class Controller {
 
-    private Model model;
+    private Sudoku model;
     private View view;
 
-    public Controller(Model model, View view) throws IOException, FileNotFoundException, ClassNotFoundException {
+    public Controller(Sudoku model, View view) throws IOException, FileNotFoundException, ClassNotFoundException {
         this.model = model;
         this.view = view;
         initView();
@@ -82,7 +84,7 @@ public class Controller {
     public void actionSolve() {
         if (!view.isIsChecking()) {
             view.setIsChecking(true);
-            Model temp = new Model(view.getSudoku());
+            Sudoku temp = new Sudoku(view.getSudoku());
             temp.backtracking();
 
             for (int i = 0; i < 9; i++) {
@@ -140,13 +142,13 @@ public class Controller {
 
     public void actionUndo() {
         view.getRedo().setEnabled(true);
-        Model copia = view.getUndos().pop();
+        Sudoku copia = view.getUndos().pop();
         if (!view.getSudoku().isNullCandidates()) {
-            view.getRedos().add(new Model(view.getSudoku()));
+            view.getRedos().add(new Sudoku(view.getSudoku()));
         } else {
             view.getRedo().setEnabled(false);
         }
-        view.setSudoku(new Model(copia));
+        view.setSudoku(new Sudoku(copia));
         if (view.getUndos().isEmpty()) {
             view.getUndo().setEnabled(false);
         }
@@ -155,9 +157,9 @@ public class Controller {
     }
 
     public void actionRedo() {
-        Model copia = view.getRedos().pop();
-        view.getUndos().add(new Model(view.getSudoku()));
-        view.setSudoku(new Model(copia));
+        Sudoku copia = view.getRedos().pop();
+        view.getUndos().add(new Sudoku(view.getSudoku()));
+        view.setSudoku(new Sudoku(copia));
         view.getUndo().setEnabled(true);
         if (view.getRedos().size() == 0) {
             view.getRedo().setEnabled(false);
@@ -179,7 +181,7 @@ public class Controller {
 
     public void actionMode(int size) throws IOException {
         //generate new model with random solution
-        Model newModel = new Model(new Model("WorkDataDefault.txt"));
+        Sudoku newModel = new Sudoku(new Sudoku("WorkDataDefault.txt"));
 
         Random rd = new Random();
         int value = rd.nextInt(9);
@@ -201,7 +203,7 @@ public class Controller {
             newModel.getCell(row, col).setSolve(false);
         }
 
-        view.setSudoku(new Model(newModel));
+        view.setSudoku(new Sudoku(newModel));
         view.getUndo().setEnabled(false);
         view.getUndos().clear();
         view.getRedo().setEnabled(false);

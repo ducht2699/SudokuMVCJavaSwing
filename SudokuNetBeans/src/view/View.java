@@ -1,21 +1,12 @@
-package sudoku;
+package view;
 
+import model.Sudoku;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.BufferedReader;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Stack;
 
 import javax.swing.ImageIcon;
@@ -25,11 +16,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import javax.swing.JPanel;
-import jdk.jfr.events.FileReadEvent;
 
 public class View extends JFrame {
 
-    private Model sudoku;
+    private Sudoku sudoku;
 
     private JPanel[][] board;
 
@@ -58,9 +48,9 @@ public class View extends JFrame {
     private JLabel[][] cands;
 
     //Undo
-    private Stack<Model> undos = new Stack<Model>();
+    private Stack<Sudoku> undos = new Stack<Sudoku>();
 
-    private Stack<Model> redos = new Stack<Model>();
+    private Stack<Sudoku> redos = new Stack<Sudoku>();
 
     //getter
     public JButton getEasy() {
@@ -87,15 +77,15 @@ public class View extends JFrame {
         return solve;
     }
 
-    public Model getSudoku() {
+    public Sudoku getSudoku() {
         return sudoku;
     }
 
-    public Stack<Model> getUndos() {
+    public Stack<Sudoku> getUndos() {
         return undos;
     }
 
-    public Stack<Model> getRedos() {
+    public Stack<Sudoku> getRedos() {
         return redos;
     }
 
@@ -128,11 +118,11 @@ public class View extends JFrame {
     }
     //setter
 
-    public void setModel(Model m) {
+    public void setModel(Sudoku m) {
         this.sudoku = m;
     }
 
-    public void setSudoku(Model sudoku) {
+    public void setSudoku(Sudoku sudoku) {
         this.sudoku = sudoku;
     }
 
@@ -222,7 +212,7 @@ public class View extends JFrame {
                         cands[(cand - 1) / 3][(cand - 1) % 3].setBounds(10 + 16 * ((cand - 1) % 3), 8 + 16 * ((cand - 1) / 3), 15, 15);
                         cands[(cand - 1) / 3][(cand - 1) % 3].addMouseListener(new MouseListener() {
                             public void mouseClicked(MouseEvent e) {
-                                undos.add(new Model(sudoku));
+                                undos.add(new Sudoku(sudoku));
                                 redos.clear();
                                 undo.setEnabled(true);
                                 redo.setEnabled(false);
