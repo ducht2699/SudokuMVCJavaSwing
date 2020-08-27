@@ -38,10 +38,29 @@ public class View extends JFrame {
 
     private JButton undo;
 
-    public void setModel(Model m) {
-        this.sudoku = m;
-    }
+    private JButton redo;
 
+    private JButton easy;
+
+    private JButton medium;
+
+    private JButton hard;
+
+    private JButton save;
+
+    private JButton load;
+
+    //Labels
+    private JLabel text;
+
+    private JLabel[][] cands;
+
+    //Undo
+    private Stack<Model> undos = new Stack<Model>();
+
+    private Stack<Model> redos = new Stack<Model>();
+
+    //getter
     public JButton getEasy() {
         return easy;
     }
@@ -62,27 +81,8 @@ public class View extends JFrame {
         return load;
     }
 
-    private JButton redo;
-
-    private JButton easy;
-
-    private JButton medium;
-
-    private JButton hard;
-
-    private JButton save;
-
-    private JButton load;
-
-    //Labels
-    private JLabel text;
-
     public JButton getSolve() {
         return solve;
-    }
-
-    public void setSudoku(Model sudoku) {
-        this.sudoku = sudoku;
     }
 
     public Model getSudoku() {
@@ -97,16 +97,6 @@ public class View extends JFrame {
         return redos;
     }
 
-
-    public void load() throws FileNotFoundException, IOException, ClassNotFoundException {
-        undos.clear();
-        redos.clear();
-        redo.setEnabled(false);
-        undo.setEnabled(false);
-        
-    }
-
-
     public JButton getUndo() {
         return undo;
     }
@@ -119,16 +109,28 @@ public class View extends JFrame {
         return cands;
     }
 
-    private JLabel[][] cands;
+    public JPanel[][] getBoard() {
+        return board;
+    }
 
-    //Undo
-    private Stack<Model> undos = new Stack<Model>();
+    public JLabel getText() {
+        return text;
+    }
+    //setter
 
-    private Stack<Model> redos = new Stack<Model>();
+    public void setModel(Model m) {
+        this.sudoku = m;
+    }
 
+    public void setSudoku(Model sudoku) {
+        this.sudoku = sudoku;
+    }
+
+    //constructor
     public View() {
     }
 
+    //methods
     public void initComponents() {
         this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         this.setTitle("Sudoku by Team 7");
@@ -156,7 +158,6 @@ public class View extends JFrame {
                 board[i][j].add(text);
                 cands = new JLabel[3][3];
                 for (int k = 0; k < 3; k++) {
-
                     for (int l = 0; l < 3; l++) {
                         int numbCand = k * 3 + l;
                         cands[k][l] = new JLabel("" + numbCand);
@@ -216,7 +217,6 @@ public class View extends JFrame {
                                 undo.setEnabled(true);
                                 redo.setEnabled(false);
                                 sudoku.setCellValue(x, y, numb);
-                                sudoku.test(x, y);
                                 update();
                                 repaint();
                                 if (sudoku.isSolve()) {
@@ -312,14 +312,6 @@ public class View extends JFrame {
         this.setVisible(true);
     }
 
-    public JPanel[][] getBoard() {
-        return board;
-    }
-
-    public JLabel getText() {
-        return text;
-    }
-
     public void doInvisibleCandidates(JPanel panel) {
         for (int k = 0; k < 10; k++) {
             JLabel candLabel = (JLabel) panel.getComponent(k);
@@ -333,7 +325,7 @@ public class View extends JFrame {
             for (int j = 0; j < 9; j++) {
                 doInvisibleCandidates(board[i][j]);
                 int value = sudoku.getCellValue(i, j);
-                if (value != 0 && value != -1) {
+                if (value != 0 && value != -1 && sudoku.getCell(i, j).isSolve()) {
                     board[i][j].remove(0);
                     JLabel label = new JLabel();
                     label.setFont(new Font("forte", 9, 40));
@@ -343,6 +335,16 @@ public class View extends JFrame {
                     label.setVisible(true);
                     board[i][j].add(label, 0);
                 }
+                if (value != 0 && value != -1 && !sudoku.getCell(i, j).isSolve()) {
+                    JLabel label = (JLabel) board[i][j].getComponent(0);
+                    label.setVisible(false);
+                    for (int cand : sudoku.getCell(i, j)) {
+                        JLabel candLabel = (JLabel) board[i][j].getComponent(cand);
+                        candLabel.setText("" + cand);
+                        candLabel.setVisible(true);
+                    }
+                }
+
                 if (value == 0) {
                     JLabel label = (JLabel) board[i][j].getComponent(0);
                     label.setVisible(false);
@@ -366,8 +368,16 @@ public class View extends JFrame {
     public void saveWork() throws IOException {
         sudoku.saveWork();
     }
-    
+
     public void loadWork() throws IOException {
-        sudoku.LoadWork();
+        sudoku.LoadWork("WorkData.txt");
+    }
+
+    public void load() throws FileNotFoundException, IOException, ClassNotFoundException {
+        undos.clear();
+        redos.clear();
+        redo.setEnabled(false);
+        undo.setEnabled(false);
+
     }
 }

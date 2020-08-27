@@ -12,43 +12,15 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
-import javafx.application.Application;
 import java.io.Serializable;
 
-
-public class Model implements Serializable{
+public class Model implements Serializable {
 
     private Cell[][] cells = new Cell[9][9];
 
     private String[] shape = new String[9];
 
-
-    public Model(Model a) {
-        constructTable();
-        for (int i = 0; i < 9; i++) {
-            this.shape[i] = a.getShape()[i];
-        }
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                cells[i][j].addObserver();
-            }
-        }
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                if (a.getCellValue(i, j) > 0) {
-                    this.cells[i][j].setValue(a.getCellValue(i, j));
-                }
-            }
-        }
-    }
-
-    
-    public Model() throws FileNotFoundException, IOException {
-        LoadWork();
-    }
-
     //GETTERS
-
     public String[] getShape() {
         return shape;
     }
@@ -79,6 +51,32 @@ public class Model implements Serializable{
         }
     }
 
+    //constructor
+    public Model(Model a) {
+        constructTable();
+        for (int i = 0; i < 9; i++) {
+            this.shape[i] = a.getShape()[i];
+        }
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                cells[i][j].addObserver();
+            }
+        }
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (a.getCellValue(i, j) > 0) {
+                    this.cells[i][j].setValue(a.getCellValue(i, j));
+                }
+                this.cells[i][j].setSolve(a.getCell(i, j).isSolve());
+            }
+        }
+    }
+
+    public Model(String filePath) throws FileNotFoundException, IOException {
+        LoadWork(filePath);
+    }
+
+    //methods
     @Override
     public String toString() {
         String string = "";
@@ -129,7 +127,7 @@ public class Model implements Serializable{
     public boolean isSolve() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                if (getCellValue(i, j) == 0 || getCellValue(i, j) == -1) {
+                if ((getCellValue(i, j) == 0 || getCellValue(i, j) == -1) && !getCell(i, j).isSolve()) {
                     return false;
                 }
             }
@@ -169,10 +167,10 @@ public class Model implements Serializable{
         }
         return false;
     }
-    
-    public void LoadWork() throws FileNotFoundException, IOException {
+
+    public void LoadWork(String filePath) throws FileNotFoundException, IOException {
         constructTable();
-        FileReader fr = new FileReader("WorkData.txt");
+        FileReader fr = new FileReader(filePath);
         BufferedReader br = new BufferedReader(fr);
         StringTokenizer token;
         String linea;
@@ -210,7 +208,7 @@ public class Model implements Serializable{
         }
         fr.close();
     }
-    
+
     public void saveWork() throws FileNotFoundException, IOException {
         File filePath = new File("WorkData.txt");
         FileWriter f = new FileWriter(filePath);
@@ -278,11 +276,6 @@ public class Model implements Serializable{
         @Override
         public void update(Observable o, Object arg) {
             values.remove(arg);
-            if (!isSolved && values.size() == 1) {
-                isSolved = true;
-                int value = getValues().get(0);
-                setValue(value);
-            }
         }
 
         public int getValue() {
@@ -291,6 +284,10 @@ public class Model implements Serializable{
 
         public boolean isSolve() {
             return this.isSolved;
+        }
+        
+        public void setSolve(boolean b) {
+            this.isSolved = b;
         }
 
         public List<Integer> getValues() {
@@ -315,6 +312,7 @@ public class Model implements Serializable{
             copia.addAll(celda.getValues());
             values.clear();
             values.addAll(copia);
+            isSolved = celda.isSolve();
         }
 
     }

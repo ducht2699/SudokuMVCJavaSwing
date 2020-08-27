@@ -15,7 +15,7 @@ import java.io.IOException;
 public class MainGame {
 
     public static void main(String args[]) throws FileNotFoundException, IOException, ClassNotFoundException {
-        Model m = new Model();
+        Model m = new Model("WorkDataDefault.txt");
         View v = new View();
         
 
